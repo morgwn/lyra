@@ -66,13 +66,22 @@ class TfLiteModelWrapper {
       return use_xnnpack_;
   }
 
- private:
+  static void SetUse8bit(const bool use) {
+    use_8bit_ = use;
+  }
+
+  static bool GetUse8bit() {
+    return use_8bit_;
+  }
+
+private:
   TfLiteModelWrapper(std::unique_ptr<tflite::FlatBufferModel> model,
                      std::unique_ptr<tflite::Interpreter> interpreter);
 
   std::unique_ptr<tflite::FlatBufferModel> model_;
   std::unique_ptr<tflite::Interpreter> interpreter_;
   static bool use_xnnpack_;
+  static bool use_8bit_;
 };
 
 }  // namespace codec

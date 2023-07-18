@@ -48,6 +48,8 @@ ABSL_FLAG(std::string, model_path, "lyra/model_coeffs",
           " For desktop this is the path relative to the binary.");
 ABSL_FLAG(bool, use_xnnpack, false,
           "Use XNNPACK optimizations or not.");
+ABSL_FLAG(bool, use_8bit, false,
+          "Use 8-bit quantized.");
 
 int main(int argc, char** argv) {
   absl::SetProgramUsageMessage(argv[0]);
@@ -64,6 +66,7 @@ int main(int argc, char** argv) {
   const bool use_xnnpack = absl::GetFlag(FLAGS_use_xnnpack);
 
   chromemedia::codec::TfLiteModelWrapper::SetUseXNNPACK(use_xnnpack); // mqm
+  chromemedia::codec::TfLiteModelWrapper::SetUse8bit(use_8bit); // mqm
 
   if (input_path.empty()) {
     LOG(ERROR) << "Flag --input_path not set.";

@@ -34,10 +34,15 @@ namespace chromemedia {
 namespace codec {
 
 bool TfLiteModelWrapper::use_xnnpack_ = false;
+bool TfLiteModelWrapper::use_8bit_ = false;
 
 std::unique_ptr<TfLiteModelWrapper> TfLiteModelWrapper::Create(
     const ghc::filesystem::path& model_file, bool use_xnn,
     bool int8_quantized) {
+  int8_quantized = use_8bit_;
+  if (use_8bit_) {
+      LOG(INFO) << "GOOLAG: Using 8-bit quantized";
+  }
   printf("\n");
   LOG(INFO) << "GOOLAG: Creating model for file: " << model_file;
   auto model = tflite::FlatBufferModel::BuildFromFile(model_file.c_str());
