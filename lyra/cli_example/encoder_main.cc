@@ -64,6 +64,7 @@ int main(int argc, char** argv) {
   const bool enable_preprocessing = absl::GetFlag(FLAGS_enable_preprocessing);
   const bool enable_dtx = absl::GetFlag(FLAGS_enable_dtx);
   const bool use_xnnpack = absl::GetFlag(FLAGS_use_xnnpack);
+  const bool use_8bit = absl::GetFlag(FLAGS_use_8bit);
 
   chromemedia::codec::TfLiteModelWrapper::SetUseXNNPACK(use_xnnpack); // mqm
   chromemedia::codec::TfLiteModelWrapper::SetUse8bit(use_8bit); // mqm
