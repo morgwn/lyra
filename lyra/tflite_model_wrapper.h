@@ -58,12 +58,21 @@ class TfLiteModelWrapper {
         interpreter_->output_tensor(index)->bytes / sizeof(T));
   }
 
+  static void SetUseXNNPACK(const bool use) {
+      use_xnnpack_ = use;
+  }
+
+  static bool GetUseXNNPACK() {
+      return use_xnnpack_;
+  }
+
  private:
   TfLiteModelWrapper(std::unique_ptr<tflite::FlatBufferModel> model,
                      std::unique_ptr<tflite::Interpreter> interpreter);
 
   std::unique_ptr<tflite::FlatBufferModel> model_;
   std::unique_ptr<tflite::Interpreter> interpreter_;
+  static bool use_xnnpack_;
 };
 
 }  // namespace codec

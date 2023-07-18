@@ -23,6 +23,7 @@
 #include "include/ghc/filesystem.hpp"
 #include "lyra/architecture_utils.h"
 #include "lyra/cli_example/encoder_main_lib.h"
+#include "lyra/tflite_model_wrapper.h" // mqm
 
 ABSL_FLAG(std::string, input_path, "",
           "Complete path to the WAV file to be encoded.");
@@ -45,6 +46,8 @@ ABSL_FLAG(std::string, model_path, "lyra/model_coeffs",
           "absolute path, like "
           "'/data/local/tmp/lyra/model_coeffs/'."
           " For desktop this is the path relative to the binary.");
+ABSL_FLAG(bool, use_xnnpack, false,
+          "Use XNNPACK optimizations or not.");
 
 int main(int argc, char** argv) {
   absl::SetProgramUsageMessage(argv[0]);
@@ -58,6 +61,9 @@ int main(int argc, char** argv) {
   const int bitrate = absl::GetFlag(FLAGS_bitrate);
   const bool enable_preprocessing = absl::GetFlag(FLAGS_enable_preprocessing);
   const bool enable_dtx = absl::GetFlag(FLAGS_enable_dtx);
+  const bool use_xnnpack = absl::GetFlag(FLAGS_use_xnnpack);
+
+  chromemedia::codec::TfLiteModelWrapper::SetUseXNNPACK(use_xnnpack); // mqm
 
   if (input_path.empty()) {
     LOG(ERROR) << "Flag --input_path not set.";

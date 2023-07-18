@@ -33,9 +33,13 @@
 namespace chromemedia {
 namespace codec {
 
+bool TfLiteModelWrapper::use_xnnpack_ = false;
+
 std::unique_ptr<TfLiteModelWrapper> TfLiteModelWrapper::Create(
     const ghc::filesystem::path& model_file, bool use_xnn,
     bool int8_quantized) {
+  printf("\n");
+  LOG(INFO) << "GOOLAG: Creating model for file: " << model_file;
   auto model = tflite::FlatBufferModel::BuildFromFile(model_file.c_str());
   if (model == nullptr) {
     LOG(ERROR) << "Could not build TFLite FlatBufferModel for file: "
@@ -60,7 +64,9 @@ std::unique_ptr<TfLiteModelWrapper> TfLiteModelWrapper::Create(
   }
 
   // Start of XNNPack delegate creation.
-  if (use_xnn) {
+  if (use_xnnpack_) { //if (use_xnn) {
+    LOG(INFO) << "GOOLAG: Creating XNNPACK delegate...";
+
     // Enable XXNPack.
     auto options = TfLiteXNNPackDelegateOptionsDefault();
     // TODO(b/219786261) Remove once XNNPACK is enabled by default.
@@ -81,6 +87,7 @@ std::unique_ptr<TfLiteModelWrapper> TfLiteModelWrapper::Create(
       LOG(ERROR) << "Failed to set delegate, and cannot continue.";
       return nullptr;
     }
+    LOG(INFO) << "GOOLAG: ...finished creating XNNPACK delegate!";
   }
   // End of XNNPack delegate creation.
 
