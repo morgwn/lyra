@@ -39,12 +39,17 @@ bool TfLiteModelWrapper::use_8bit_ = false;
 std::unique_ptr<TfLiteModelWrapper> TfLiteModelWrapper::Create(
     const ghc::filesystem::path& model_file, bool use_xnn,
     bool int8_quantized) {
+
+  LOG(INFO) << "GOOLAG: Creating model for file: " << model_file;
   int8_quantized = use_8bit_;
   if (use_8bit_) {
       LOG(INFO) << "GOOLAG: Using 8-bit quantized";
   }
-  printf("\n");
-  LOG(INFO) << "GOOLAG: Creating model for file: " << model_file;
+  use_xnn = use_xnnpack_;
+  if (use_xnnpack_) {
+      LOG(INFO) << "GOOLAG: Using XNNPACK";
+  }
+
   auto model = tflite::FlatBufferModel::BuildFromFile(model_file.c_str());
   if (model == nullptr) {
     LOG(ERROR) << "Could not build TFLite FlatBufferModel for file: "
@@ -69,8 +74,8 @@ std::unique_ptr<TfLiteModelWrapper> TfLiteModelWrapper::Create(
   }
 
   // Start of XNNPack delegate creation.
-  if (use_xnnpack_) { //if (use_xnn) {
-    LOG(INFO) << "GOOLAG: Creating XNNPACK delegate...";
+  if (use_xnn) {
+//    LOG(INFO) << "GOOLAG: Creating XNNPACK delegate...";
 
     // Enable XXNPack.
     auto options = TfLiteXNNPackDelegateOptionsDefault();
@@ -92,7 +97,7 @@ std::unique_ptr<TfLiteModelWrapper> TfLiteModelWrapper::Create(
       LOG(ERROR) << "Failed to set delegate, and cannot continue.";
       return nullptr;
     }
-    LOG(INFO) << "GOOLAG: ...finished creating XNNPACK delegate!";
+//    LOG(INFO) << "GOOLAG: ...finished creating XNNPACK delegate!";
   }
   // End of XNNPack delegate creation.
 
